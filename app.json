@@ -3,6 +3,7 @@
     "name": "supplyrun",
     "slug": "supplyrun",
     "version": "1.0.0",
+    "scheme": "supplyrun",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

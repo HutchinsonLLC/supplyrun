@@ -179,11 +179,16 @@ function SignInScreen() {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const expoClientId = process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID?.trim();
+  const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim();
+  const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID?.trim();
+  const androidClientId = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID?.trim();
+
   const [request, response, promptAsync] = useIdTokenAuthRequest({
-    clientId: process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    clientId: expoClientId ?? webClientId,
+    iosClientId: iosClientId ?? webClientId,
+    androidClientId: androidClientId ?? webClientId,
+    webClientId,
   });
 
   useEffect(() => {
@@ -280,7 +285,17 @@ function SignInScreen() {
 
       <TouchableOpacity
         style={styles.secondaryButton}
-        onPress={() => promptAsync()}
+        onPress={() => {
+          if (!request) {
+            Alert.alert(
+              'Google Sign-in unavailable',
+              'Add Google OAuth client IDs in .env and restart Expo with -c.',
+            );
+            return;
+          }
+
+          promptAsync();
+        }}
         disabled={!request}
       >
         <Text style={styles.secondaryButtonText}>Continue with Google</Text>

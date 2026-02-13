@@ -180,6 +180,7 @@ function SignInScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   const [request, response, promptAsync] = useIdTokenAuthRequest({
+    clientId: process.env.EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID,
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
@@ -197,6 +198,9 @@ function SignInScreen() {
       signInWithCredential(auth, credential).catch((error) => {
         Alert.alert('Google Sign-in failed', error.message);
       });
+    } else if (response?.type === 'error') {
+      const errorMessage = response.error?.message ?? 'Unknown Google auth error.';
+      Alert.alert('Google Sign-in failed', errorMessage);
     }
   }, [response]);
 
